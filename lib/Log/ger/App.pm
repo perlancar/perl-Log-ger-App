@@ -48,9 +48,8 @@ sub import {
     require Log::ger::Util;
 
     my $level = $args{level};
-    $level = Log::ger::Util::numeric_level(_level_from_env("") || 'warn')
-        if !defined($level);
-    $Log::ger::Current_Level = $level;
+    $level = _level_from_env("") || 'warn' if !defined($level);
+    $Log::ger::Current_Level = Log::ger::Util::numeric_level($level);
 
     my $is_daemon = $args{daemon};
     $is_daemon = _is_daemon() if !defined($is_daemon);

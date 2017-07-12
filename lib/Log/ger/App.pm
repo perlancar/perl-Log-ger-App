@@ -47,7 +47,9 @@ sub import {
     require Log::ger;
     require Log::ger::Util;
 
-    my $level = Log::ger::Util::numeric_level(_level_from_env("") || 'warn');
+    my $level = $args{level};
+    $level = Log::ger::Util::numeric_level(_level_from_env("") || 'warn')
+        if !defined($level);
     $Log::ger::Current_Level = $level;
 
     my $is_daemon = $args{daemon};
@@ -141,6 +143,10 @@ different level using I<OUTPUT_NAME>_{C<LOG_LEVEL|TRACE|DEBUG|VERBOSE|QUIET>}.
 Arguments:
 
 =over
+
+=item * level => str|num
+
+Explicitly set level.
 
 =item * name => str
 

@@ -1,5 +1,5 @@
-0.001    2017-07-12 (PERLANCAR) (unreleased)
+0.001    2017-07-12 (PERLANCAR)
 
-         - First release, Log::ger::App is a spiritual successor to
-           Log::Any::App. But, thanks to Log::ger::Output::Composite, this
-           module will be very simple.
+         - First release. Log::ger::App is a spiritual successor to
+           Log::Any::App. Log::ger::App tries to do less and, thanks to
+           Log::ger::Output::Composite, will be much simpler.

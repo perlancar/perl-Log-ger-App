@@ -8,15 +8,6 @@ use strict;
 use warnings;
 # END IFUNBUILT
 
-our %PATTERN_STYLES = (
-    plain             => '%m',
-    plain_nl          => '%m%n',
-    script_short      => '[%r] %m%n',
-    script_long       => '[%d] %m%n',
-    daemon            => '[pid %P] [%d] %m%n',
-    syslog            => '[pid %p] %m',
-);
-
 sub _level_from_env {
     my $prefix = shift;
     return $ENV{"${prefix}LOG_LEVEL"} if defined $ENV{"${prefix}LOG_LEVEL"};
@@ -60,7 +51,9 @@ sub import {
     $Log::ger::Current_Level = $level;
 
     my $is_daemon = $args{daemon};
-    $is_daemon = if !defined($is_daemon);
+    $is_daemon = _is_daemon() if !defined($is_daemon);
+
+    my $is_oneliner = $0 eq '-e';
 
     my $progname = $args{name};
     unless (defined $progname) {
@@ -73,12 +66,15 @@ sub import {
 
     # configuration for Log::ger::Output::Composite
     my %conf = (
-        outputs => [],
+        outputs => {},
     );
 
     # add Screen
     unless ($is_daemon) {
-        $conf{outputs}{Screen} = {};
+        $conf{outputs}{Screen} = {
+            level  => _level_from_env("SCREEN_"),
+            layout => [Pattern => {format => $is_oneliner ? '[%r] %m' : '[%d] %m'}],
+        };
     }
 
     # add File
@@ -88,20 +84,22 @@ sub import {
             PERLANCAR::File::HomeDir::get_my_home_dir()."/$progname.log" :
               "/var/log/$progname.log";
         $conf{outputs}{File} = {
-            path => $path,
+            conf   => { path => $path },
+            level  => _level_from_env("FILE_"),
+            layout => [Pattern => {format => '[pid %P] [%d] %m'}],
         };
     }
 
     # add Syslog
     if ($is_daemon) {
         $conf{outputs}{Syslog} = {
-            ident => $progname,
-            facility => 'daemon',
+            conf => { ident => $progname, facility => 'daemon' },
+            level => _level_from_env("SYSLOG_"),
         };
     }
 
-    require Log::ger::Plugin;
-    Log::ger::Plugin->set('Composite', %conf);
+    require Log::ger::Output;
+    Log::ger::Output->set('Composite', %conf);
 }
 
 1;

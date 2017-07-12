@@ -73,8 +73,9 @@ sub import {
     # add Screen
     unless ($is_daemon) {
         $conf{outputs}{Screen} = {
+            conf   => { formatter => sub { "$progname: $_[0]" } },
             level  => _level_from_env("SCREEN_"),
-            layout => [Pattern => {format => $is_oneliner ? '[%r] %m' : '[%d] %m'}],
+            #layout => [Pattern => {format => '%m'}],
         };
     }
 

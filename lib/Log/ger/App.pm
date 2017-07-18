@@ -100,6 +100,11 @@ sub import {
         };
     }
 
+    if ($args{outputs}) {
+        $conf{outputs}{$_} = $args{outputs}{$_}
+            for keys %{$args{outputs}{$_}};
+    }
+
     require Log::ger::Output;
     Log::ger::Output->set('Composite', %conf);
 }
@@ -146,7 +151,8 @@ Arguments:
 
 =item * level => str|num
 
-Explicitly set level.
+Explicitly set level. Otherwise, the default will be taken from environment
+variable like described previously in L</"DESCRIPTION">.
 
 =item * name => str
 
@@ -159,6 +165,11 @@ Explicitly tell Log::ger::App that your application is a daemon or not.
 Otherwise, Log::ger::App will try some heuristics to guess whether your
 application is a daemon: from the value of C<$main::IS_DAEMON> and from the
 presence of modules like L<HTTP::Daemon>, L<Proc::Daemon>, etc.
+
+=item * outputs => hash
+
+Specify extra outputs. Will be passed to L<Log::ger::Output::Composite>
+configuration.
 
 =back
 

@@ -114,13 +114,23 @@ sub import {
 
 =head1 SYNOPSIS
 
+In your script:
+
  use Log::ger::App;
+ use Your::App::Module; # your module which uses Log::ger to do its logging
+
+If you also do logging in your script:
+
+ use Log::ger::App;
+ use Log::ger;
+
+ log_warn("Some log ...");
 
 
 =head1 DESCRIPTION
 
-This module sets up sensible defaults for L<Log::ger::Output::Composite> from
-the environment variables.
+This module basically loads L<Log::ger::Output::Composite> with some sensible
+defaults and allows customizing some aspects via environment variable.
 
 B<Outputs:>
 
@@ -131,14 +141,16 @@ B<Outputs:>
  Script running as root          y       /var/log/PROGNAME.log  -
  Daemon                          -       /var/log/PROGNAME.log  y
 
-B<General log level:> the default is warn (like L<Log::ger>'s default). You can
-set it from environment using L<LOG_LEVEL> (e.g. C<LOG_LEVEL=trace> to set level
-to trace or L<LOG_LEVEL=0> to turn off logging). Alternatively, you can set to
-trace using C<TRACE=1>, or debug with C<DEBUG=1>, info with C<VERBOSE=1>, error
-with C<QUIET=1>.
+B<General log level:> the default is C<warn> (like L<Log::ger>'s default). You
+can set it from environment using L<LOG_LEVEL> (e.g. C<LOG_LEVEL=trace> to set
+level to trace or L<LOG_LEVEL=0> to turn off logging). Alternatively, you can
+set to C<trace> using C<TRACE=1>, or C<debug> with C<DEBUG=1>, C<info> with
+C<VERBOSE=1>, C<error> with C<QUIET=1>.
 
 B<Per-output level:> the default is to use general level, but you can set a
-different level using I<OUTPUT_NAME>_{C<LOG_LEVEL|TRACE|DEBUG|VERBOSE|QUIET>}.
+different level using I<OUTPUT_NAME>_{C<LOG_LEVEL|TRACE|DEBUG|VERBOSE|QUIET>}
+variables. For example, C<SCREEN_DEBUG=1> to set screen level to C<debug> or
+C<FILE_LOG_LEVEL=off> to turn off file logging.
 
 
 =head1 FUNCTIONS

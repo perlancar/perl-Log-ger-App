@@ -71,32 +71,41 @@ sub import {
     );
 
     # add Screen
-    unless ($is_daemon) {
+    {
+        last if $is_daemon;
+        my $level = _level_from_env("SCREEN_");
+        last if defined $level && $level eq 'off';
         $conf{outputs}{Screen} = {
             conf   => { formatter => sub { "$progname: $_[0]" } },
-            level  => _level_from_env("SCREEN_"),
+            level  => $level,
             #layout => [Pattern => {format => '%m'}],
         };
     }
 
     # add File
-    unless ($0 eq '-') {
+    {
+        last if $0 eq '-';
         require PERLANCAR::File::HomeDir;
         my $path = $> ?
             PERLANCAR::File::HomeDir::get_my_home_dir()."/$progname.log" :
               "/var/log/$progname.log";
+        my $level = _level_from_env("FILE_");
+        last if defined $level && $level eq 'off';
         $conf{outputs}{File} = {
             conf   => { path => $path },
-            level  => _level_from_env("FILE_"),
+            level  => $level,
             layout => [Pattern => {format => '[pid %P] [%d] %m'}],
         };
     }
 
     # add Syslog
-    if ($is_daemon) {
+    {
+        last unless $is_daemon;
+        my $level = _level_from_env("SYSLOG_");
+        last if defined $level && $level eq 'off';
         $conf{outputs}{Syslog} = {
             conf => { ident => $progname, facility => 'daemon' },
-            level => _level_from_env("SYSLOG_"),
+            level => $level,
         };
     }
 

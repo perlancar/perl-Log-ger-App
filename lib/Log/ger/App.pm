@@ -75,10 +75,11 @@ sub import {
         last if $is_daemon;
         my $level = _level_from_env("SCREEN_");
         last if defined $level && $level eq 'off';
+        my $fmt = ($ENV{LOG_ADD_TIMESTAMP} ? '[%d] ': ''). '%m';
         $conf{outputs}{Screen} = {
             conf   => { formatter => sub { "$progname: $_[0]" } },
             level  => $level,
-            #layout => [Pattern => {format => '%m'}],
+            layout => [Pattern => {format => $fmt}],
         };
     }
 
@@ -196,6 +197,11 @@ configuration.
 
 
 =head1 ENVIRONMENT
+
+=head2 LOG_ADD_TIMESTAMP
+
+Boolean. Default to false. If set to true, will add timestamps to the screen
+log. Normally, timestamps will only be added to the file log.
 
 =head2 LOG_LEVEL => str
 

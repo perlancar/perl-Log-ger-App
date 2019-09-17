@@ -1,3 +1,10 @@
+0.010   2019-09-17  Released-By: PERLANCAR; Urgency: low
+
+	- No functional changes.
+
+	- [doc] Add FAQ item on how to re-set log level.
+
+
 0.009   2018-12-17  Released-By: PERLANCAR
 
         - Introduce import argument 'default_level' to set default log level.

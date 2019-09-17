@@ -315,6 +315,7 @@ configuration.
 Default is false. If set to true, will show more details about how log level,
 etc is set.
 
+
 =head1 ENVIRONMENT
 
 =head2 LOG_GER_APP_DEBUG
@@ -375,6 +376,27 @@ Bool.
 =head2 SYSLOG_VERBOSE
 
 =head2 SYSLOG_QUIET
+
+
+=head1 FAQS
+
+=head2 Why does re-setting log level (using Log::ger::Util::set_level) doesn't work?
+
+(This FAQ item is from L<Log::ger::Output::Composite>'s, slightly modified).
+
+The Log::ger::Output::Composite plugin that Log::ger::App uses sets its own
+levels and logs using a multilevel routine (which gets called for all levels).
+Re-setting log level dynamically via L<Log::ger::Util>'s C<set_level> will not
+work as intended, which is fortunate or unfortunate depending on your need.
+
+If you want to override all levels settings with a single value, you can use
+C<Log::ger::Output::Composite::set_level>, for example:
+
+ Log::ger::Util::set_level('trace'); # also set this too
+ Log::ger::Output::Composite::set_level('trace');
+
+This sets an internal level setting which is respected and has the highest
+precedence so all levels settings will use this instead.
 
 
 =head1 SEE ALSO

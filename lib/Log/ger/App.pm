@@ -130,19 +130,29 @@ sub import {
 
     # add File
     {
+        my $file_name = delete $args{file_name};
+        unless (defined $file_name) {
+            $file_name = "$progname.log";
+        }
+
+        my $file_dir  = delete $args{file_dir};
+        unless (defined $file_dir) {
+            require PERLANCAR::File::HomeDir;
+            $file_dir = $> ? PERLANCAR::File::HomeDir::get_my_home_dir() :
+                (-d "/var/log" ? "/var/log" : "/");
+        }
+
         last if $0 eq '-';
-        require PERLANCAR::File::HomeDir;
-        my $path = $> ?
-            PERLANCAR::File::HomeDir::get_my_home_dir()."/$progname.log" :
-              "/var/log/$progname.log";
+
+        my $file_path = "$file_dir/$file_name";
         my $olevel = _set_level(
-            "file ($path) log level",
+            "file ($file_path) log level",
             envset => "FILE_", "",
             val => $level, "general log level",
         );
         last if $olevel eq 'off';
         $conf{outputs}{File} = {
-            conf   => { path => $path },
+            conf   => { path => $file_path },
             level  => $olevel,
             layout => [Pattern => {format => '[pid %P] [%d] %m'}],
         };
@@ -163,7 +173,7 @@ sub import {
         };
     }
 
-    if (my $output = delete $args{outputs}) {
+    if (my $outputs = delete $args{outputs}) {
         $conf{outputs}{$_} = $outputs->{$_}
             for keys %{$outputs->{$_}};
     }
@@ -298,6 +308,16 @@ Program name will be shown on the screen, e.g.:
  myprog: Doing task 1 ...
  myprog: Doing task 2 ...
  myprog: Exiting ...
+
+=item * file_name
+
+str. Explicitly set log filename. By default, filename will be set to
+I<name>.log.
+
+=item * file_dir
+
+str. Explicitly set log file's directory. By default, it is user's home (if not
+running as root), or F</var/log> (if running as root).
 
 =item * daemon
 

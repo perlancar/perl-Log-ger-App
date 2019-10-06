@@ -106,9 +106,6 @@ sub import {
         $progname = "prog";
     }
 
-    die "Unknown argument(s): ".join(", ", sort keys %args)
-        if keys %args;
-
     # configuration for Log::ger::Output::Composite
     my %conf = (
         outputs => {},
@@ -166,10 +163,13 @@ sub import {
         };
     }
 
-    if ($args{outputs}) {
-        $conf{outputs}{$_} = $args{outputs}{$_}
-            for keys %{$args{outputs}{$_}};
+    if (my $output = delete $args{outputs}) {
+        $conf{outputs}{$_} = $outputs->{$_}
+            for keys %{$outputs->{$_}};
     }
+
+    die "Unknown argument(s): ".join(", ", sort keys %args)
+        if keys %args;
 
     require Log::ger::Output;
     Log::ger::Output->set('Composite', %conf);

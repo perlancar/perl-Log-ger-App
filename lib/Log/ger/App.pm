@@ -80,21 +80,24 @@ sub import {
     require Log::ger;
     require Log::ger::Util;
 
+    my $level_arg = delete $args{level};
+    my $default_level_arg = delete $args{default_level};
+
     my $level = _set_level(
         "general log level",
-        val => $args{level}, "import argument 'level'",
+        val => $level_arg, "import argument 'level'",
         envset => "", "",
-        val => $args{default_level}, "import argument 'default_level'",
+        val => $default_level_arg, "import argument 'default_level'",
         val => 'warn', "fallback value",
     );
     $Log::ger::Current_Level = Log::ger::Util::numeric_level($level);
 
-    my $is_daemon = $args{daemon};
+    my $is_daemon = delete $args{daemon};
     $is_daemon = _is_daemon() if !defined($is_daemon);
 
     my $is_oneliner = $0 eq '-e';
 
-    my $progname = $args{name};
+    my $progname = delete $args{name};
     unless (defined $progname) {
         ($progname = $0) =~ s!.+/!!;
         $progname =~ s/\.pl$//;
@@ -102,6 +105,9 @@ sub import {
     unless (length $progname) {
         $progname = "prog";
     }
+
+    die "Unknown argument(s): ".join(", ", sort keys %args)
+        if keys %args;
 
     # configuration for Log::ger::Output::Composite
     my %conf = (

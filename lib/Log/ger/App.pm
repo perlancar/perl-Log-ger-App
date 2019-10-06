@@ -406,6 +406,37 @@ Bool.
 
 =head1 FAQS
 
+=head2 How do I turn off file logging?
+
+By default, file logging is on unless running as a Perl one-liner (under
+C<perl>'s C<-e>).
+
+To explicitly turn file logging off, you can set I<FILE_LEVEL> environment
+variable to C<off>, for example:
+
+ BEGIN { $ENV{FILE_LEVEL} //= "off" }
+ use Log::ger::App;
+
+=head2 How do I turn off screen logging?
+
+By default, screen logging is on unless script is a daemon.
+
+To explicitly turn screen logging off, you can set I<SCREEN_LEVEL> environment
+variable to C<off>, for example:
+
+ BEGIN { $ENV{SCREEN_LEVEL} //= "off" }
+ use Log::ger::App;
+
+=head2 How do I turn off syslog logging?
+
+By default, syslog logging is on if script is a daemon.
+
+To explicitly turn syslog logging off, you can set I<SYSLOG_LEVEL> environment
+variable to C<off>, for example:
+
+ BEGIN { $ENV{SYSLOG_LEVEL} //= "off" }
+ use Log::ger::App;
+
 =head2 Why doesn't re-setting log level using Log::ger::Util::set_level() work?
 
 (This FAQ item is from L<Log::ger::Output::Composite>'s, slightly modified).

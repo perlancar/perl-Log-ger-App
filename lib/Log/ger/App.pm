@@ -120,7 +120,10 @@ sub import {
             val => $level, "general log level",
         );
         last if $olevel eq 'off';
-        my $fmt = ($ENV{LOG_ADD_TIMESTAMP} ? '[%d] ': ''). '%m';
+        my $fmt =
+            ($ENV{LOG_ADD_TIMESTAMP} ? '[%d] ': '').
+            ($ENV{LOG_ADD_MEMORY_INFO} ? '[vmsize %_{vmsize}K] ': '').
+            '%m';
         $conf{outputs}{Screen} = {
             conf   => { formatter => sub { "$progname: $_[0]" } },
             level  => $olevel,
@@ -151,10 +154,14 @@ sub import {
             val => $level, "general log level",
         );
         last if $olevel eq 'off';
+        my $fmt =
+            '[pid %P] [%d] '.
+            ($ENV{LOG_ADD_MEMORY_INFO} ? '[vmsize %_{vmsize}K] ': '').
+            '%m';
         $conf{outputs}{File} = {
             conf   => { path => $file_path },
             level  => $olevel,
-            layout => [Pattern => {format => '[pid %P] [%d] %m'}],
+            layout => [Pattern => {format => $fmt}],
         };
     }
 
@@ -352,6 +359,11 @@ Used to set the default for C<$DEBUG>.
 
 Boolean. Default to false. If set to true, will add timestamps to the screen
 log. Normally, timestamps will only be added to the file log.
+
+=head2 LOG_ADD_MEMORY_INFO
+
+Boolean. Default to false. If set to true, will add memory info to log (see
+C<_{vmtime}> in L<Log::ger::Layout::Pattern>).
 
 =head2 LOG_LEVEL
 

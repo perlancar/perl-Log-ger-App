@@ -363,7 +363,7 @@ log. Normally, timestamps will only be added to the file log.
 =head2 LOG_ADD_MEMORY_INFO
 
 Boolean. Default to false. If set to true, will add memory info to log (see
-C<_{vmtime}> in L<Log::ger::Layout::Pattern>).
+C<%_{vmtime}> pattern in L<Log::ger::Layout::Pattern>).
 
 =head2 LOG_LEVEL
 

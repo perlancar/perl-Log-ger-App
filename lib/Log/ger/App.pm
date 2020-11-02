@@ -141,8 +141,9 @@ sub import {
         my $file_dir  = delete $args{file_dir};
         unless (defined $file_dir) {
             require PERLANCAR::File::HomeDir;
-            $file_dir = $> ? PERLANCAR::File::HomeDir::get_my_home_dir() :
-                (-d "/var/log" ? "/var/log" : "/");
+            $file_dir = $> || $^O eq 'MSWin32' ?
+                PERLANCAR::File::HomeDir::get_my_home_dir() :
+                  (-d "/var/log" ? "/var/log" : "/");
         }
 
         last if $0 eq '-';

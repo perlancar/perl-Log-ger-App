@@ -1,3 +1,8 @@
+0.017   2020-11-11  Released-By: PERLANCAR; Urgency: medium
+
+	- [bugfix] Setting 'outputs' argument didn't work.
+
+
 0.016   2020-11-11  Released-By: PERLANCAR; Urgency: medium
 
 	- Set @IMPORT_ARGS.

@@ -83,6 +83,7 @@ sub import {
     require Log::ger;
     require Log::ger::Util;
 
+    my $extra_conf = delete $args{extra_conf};
     my $level_arg = delete $args{level};
     my $default_level_arg = delete $args{default_level};
 
@@ -112,6 +113,7 @@ sub import {
     # configuration for Log::ger::Output::Composite
     my %conf = (
         outputs => {},
+        %{ $extra_conf // {} },
     );
 
     # add Screen
@@ -348,8 +350,29 @@ presence of modules like L<HTTP::Daemon>, L<Proc::Daemon>, etc.
 
 =item * outputs
 
-hash. Specify extra outputs. Will be passed to L<Log::ger::Output::Composite>
-configuration.
+hash. Specify extra outputs. Will be added to L<Log::ger::Output::Composite>'s
+C<outputs> configuration.
+
+Example:
+
+ outputs => {
+     DirWriteRotate => {
+         conf => {dir=>'/home/ujang/log', max_size=>10_000},
+         level => 'off',
+         category_level => {Dump => 'info'},
+     },
+ },
+
+=item * extra_conf
+
+Hash. Specify extra configuration, will be added to
+L<Log::ger::Output::Composite>'s configuration.
+
+Example:
+
+ extra_conf => {
+     category_level => {Dump => 'off'},
+ },
 
 =back
 

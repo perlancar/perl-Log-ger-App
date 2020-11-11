@@ -10,6 +10,9 @@ use warnings;
 
 our $DEBUG = defined($ENV{LOG_GER_APP_DEBUG}) ? $ENV{LOG_GER_APP_DEBUG} : 0;
 
+# last import args
+our @IMPORT_ARGS;
+
 sub _set_level {
     my $name = shift;
 
@@ -189,6 +192,9 @@ sub import {
     die "Unknown argument(s): ".join(", ", sort keys %args)
         if keys %args;
 
+    # save, for those who want to check or modify
+    @IMPORT_ARGS = @_;
+
     require Log::ger::Output;
     Log::ger::Output->set('Composite', %conf);
 }
@@ -348,6 +354,11 @@ configuration.
 
 Default is false. If set to true, will show more details about how log level,
 etc is set.
+
+=head2 @IMPORT_ARGS
+
+Will be set with the last aguments passed to import(), for informational
+purposes.
 
 
 =head1 ENVIRONMENT

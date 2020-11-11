@@ -185,8 +185,14 @@ sub import {
     }
 
     if (my $outputs = delete $args{outputs}) {
-        $conf{outputs}{$_} = $outputs->{$_}
-            for keys %{$outputs->{$_}};
+        for my $o (sort keys %$outputs) {
+            if ($conf{outputs}{$o}) {
+                warn "[lga] OVERWRITING output '$o' using output from 'outputs' argument\n" if $DEBUG;
+            } else {
+                warn "[lga] Adding output '$o' from 'outputs' argument\n" if $DEBUG;
+            }
+            $conf{outputs}{$o} = $outputs->{$o};
+        }
     }
 
     die "Unknown argument(s): ".join(", ", sort keys %args)

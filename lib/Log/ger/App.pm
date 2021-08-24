@@ -126,7 +126,8 @@ sub import {
         );
         last if $olevel eq 'off';
         my $fmt =
-            ($ENV{LOG_ADD_LOCATION} ? '[file %F:%L] ': '').
+            ($ENV{LOG_ADD_STACK_TRACE} ? '[stack %T] ': '').
+            ($ENV{LOG_ADD_LOCATION} ? '[location %l] ': '').
             ($ENV{LOG_ADD_TIMESTAMP} ? '[%d] ': '').
             ($ENV{LOG_ADD_MEMORY_INFO} ? '[vmsize %_{vmsize}K] ': '').
             '%m';
@@ -402,6 +403,12 @@ Used to set the default for C<$DEBUG>.
 Boolean. Default to false. If set to true, will add location to the log:
 
  [file /some/path.pm:123]
+
+=head2 LOG_ADD_STACK_TRACE
+
+Boolean. Default to false. If set to true, will add stack trace to the log:
+
+ [stack ...]
 
 =head2 LOG_ADD_TIMESTAMP
 

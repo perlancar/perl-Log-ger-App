@@ -1,12 +1,12 @@
 package Log::ger::App;
 
-# DATE
-# VERSION
-
-# IFUNBUILT
 use strict;
 use warnings;
-# END IFUNBUILT
+
+# AUTHORITY
+# DATE
+# DIST
+# VERSION
 
 our $DEBUG = defined($ENV{LOG_GER_APP_DEBUG}) ? $ENV{LOG_GER_APP_DEBUG} : 0;
 
@@ -126,6 +126,7 @@ sub import {
         );
         last if $olevel eq 'off';
         my $fmt =
+            ($ENV{LOG_ADD_LOCATION} ? '[file %F:%L] ': '').
             ($ENV{LOG_ADD_TIMESTAMP} ? '[%d] ': '').
             ($ENV{LOG_ADD_MEMORY_INFO} ? '[vmsize %_{vmsize}K] ': '').
             '%m';
@@ -395,6 +396,12 @@ purposes.
 =head2 LOG_GER_APP_DEBUG
 
 Used to set the default for C<$DEBUG>.
+
+=head2 LOG_ADD_LOCATION
+
+Boolean. Default to false. If set to true, will add location to the log:
+
+ [file /some/path.pm:123]
 
 =head2 LOG_ADD_TIMESTAMP
 

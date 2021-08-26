@@ -119,8 +119,8 @@ sub import {
     my %off_categories = (
         # some known categories that are not normally logged to screen or
         # (error) file log
-        'Dumps' => 'off',  # e.g. in Finance::Bank::ID::*
-        'access' => 'off', # e.g. in WWW::PAUSE::Simple
+        #'_dumps'  => 'off', # e.g. in download-bca, download-mandiri
+        '_access' => 'off', # e.g. in WWW::PAUSE::Simple
     );
 
     # add Screen

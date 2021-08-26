@@ -116,6 +116,13 @@ sub import {
         %{ $extra_conf // {} },
     );
 
+    my %off_categories = (
+        # some known categories that are not normally logged to screen or
+        # (error) file log
+        'Dumps' => 'off',  # e.g. in Finance::Bank::ID::*
+        'access' => 'off', # e.g. in WWW::PAUSE::Simple
+    );
+
     # add Screen
     {
         last if $is_daemon;
@@ -134,6 +141,7 @@ sub import {
         $conf{outputs}{Screen} = {
             conf   => { formatter => sub { "$progname: $_[0]" } },
             level  => $olevel,
+            category_level => \%off_categories,
             layout => [Pattern => {format => $fmt}],
         };
     }
@@ -169,6 +177,7 @@ sub import {
         $conf{outputs}{File} = {
             conf   => { path => $file_path },
             level  => $olevel,
+            category_level => \%off_categories,
             layout => [Pattern => {format => $fmt}],
         };
     }
@@ -185,6 +194,7 @@ sub import {
         $conf{outputs}{Syslog} = {
             conf => { ident => $progname, facility => 'daemon' },
             level => $olevel,
+            category_level => \%off_categories,
         };
     }
 

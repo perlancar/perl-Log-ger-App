@@ -139,7 +139,7 @@ sub import {
             ($ENV{LOG_ADD_MEMORY_INFO} ? '[vmsize %_{vmsize}K] ': '').
             '%m';
         $conf{outputs}{Screen} = {
-            conf   => { formatter => sub { "$progname: $_[0]" } },
+            conf   => { formatter => sub { "$progname: $_[0]" }, colorize_tags => 1 },
             level  => $olevel,
             category_level => \%off_categories,
             layout => [Pattern => {format => $fmt}],

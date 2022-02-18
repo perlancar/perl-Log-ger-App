@@ -87,11 +87,20 @@ sub import {
     my $level_arg = delete $args{level};
     my $default_level_arg = delete $args{default_level};
 
+    my $default_level_var_name = delete($args{default_level_var_name});
+    $default_level_var_name = "Default_Log_Level" unless defined $default_level_var_name;
+    $default_level_var_name = "main::$default_level_var_name" unless $default_level_var_name =~ /::/;
+    my $default_level_var_value = do {
+        no strict 'refs'; ## no critic: TestingAndDebugging::ProhibitNoStrict
+        ${"$default_level_var_name"};
+    };
+
     my $level = _set_level(
         "general log level",
         val => $level_arg, "import argument 'level'",
         envset => "", "",
         val => $default_level_arg, "import argument 'default_level'",
+        val => $default_level_var_value, "\$$default_level_var_name",
         val => 'warn', "fallback value",
     );
     $Log::ger::Current_Level = Log::ger::Util::numeric_level($level);
@@ -279,7 +288,27 @@ the preferred method of setting default level:
 
  use Log::ger::App default_level => 'info'; # be verbose by default. unless changed by env vars
 
-C<warn>. The fallback level is warn, if all the above does not provide a value.
+B<Via main package variable $main::Default_Log_Level>. The next value to be
+consulted is the main package variable C<$main::Default_Log_Level>. The name of
+the variable can be customized using the import argument
+C<default_level_var_name>. Note that you need to set the variable's value before
+loading Log::ger::App, so this does not work:
+
+ use Log::ger::App;
+ our $Default_Log_Level = 'info';
+
+this does not also:
+
+ our $Default_Log_Level = 'info';
+ use Log::ger::App;
+
+but this does:
+
+ BEGIN { our $Default_Log_Level = 'info' }
+ use Log::ger::App;
+
+B<Fallback value "warn">. The fallback level is warn, if all the above does not
+provide a value.
 
 =head2 Setting per-output log level
 
@@ -330,6 +359,13 @@ flexibility. See instead: L</default_level>.
 str|num. Instead of hard-coding level with L</level>, you can set a default
 level. Environment variables will be consulted first (as described in
 L</DESCRIPTION>) before falling back to this level.
+
+=item * default_level_var_name
+
+str. Optional. Name of scalar variable (without the sigil) to be consulted for
+the default level (after the C<default_level> import argument). If the name of
+the variable does not contain package name, it will be assumed to be in the
+"main" package. The default value is C<main::Default_Log_Level>.
 
 =item * name
 
@@ -512,6 +548,24 @@ To explicitly turn syslog logging off, you can set I<SYSLOG_LEVEL> environment
 variable to C<off>, for example:
 
  BEGIN { $ENV{SYSLOG_LEVEL} //= "off" }
+ use Log::ger::App;
+
+=head2 Why doesn't setting $main::Default_Log_Level work?
+
+Note that you need to set the variable's value before loading Log::ger::App, so
+this does not work:
+
+ use Log::ger::App;
+ our $Default_Log_Level = 'info';
+
+this does not also:
+
+ our $Default_Log_Level = 'info';
+ use Log::ger::App;
+
+but this does:
+
+ BEGIN { our $Default_Log_Level = 'info' }
  use Log::ger::App;
 
 =head2 Why doesn't re-setting log level using Log::ger::Util::set_level() work?
